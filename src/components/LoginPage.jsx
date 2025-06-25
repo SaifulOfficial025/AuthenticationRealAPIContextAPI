@@ -2,11 +2,15 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useHistory } from 'react-router-dom';
 import { AuthProvider } from '../context/AuthContext';
+import { Link, useLocation } from "react-router-dom";
 
 
 export default function LoginPage() {
   const { login } = useContext(AuthContext);
   const history = useHistory();
+
+  const location = useLocation(); 
+  const from = location.state?.from?.pathname || '/dashboard'; 
 
 
   const [email, setEmail] = useState('');
@@ -19,7 +23,7 @@ export default function LoginPage() {
 
     const result = await login(email, password);
     if (result.success) {
-        history.push('/dashboard');
+        history.push(from);
         // or any protected route
     } else {
       setError(result.message);
@@ -63,6 +67,12 @@ export default function LoginPage() {
             Sign In
           </button>
         </form>
+        <p className="text-center text-gray-500 mt-4">
+          New User? <Link to="/register" className="text-blue-500 hover:underline">Create an Account</Link>
+        </p>
+        <p className="text-center text-gray-500 mt-4">
+          <Link to="/reset-password" className="text-orange-500 hover:underline">Reset Password</Link>
+        </p>
       </div>
     </div>
   );

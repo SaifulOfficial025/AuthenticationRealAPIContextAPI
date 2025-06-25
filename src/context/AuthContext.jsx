@@ -52,8 +52,41 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+
+
+  const register = async (email, password, username) => {
+    try {
+      const res = await fetch('http://192.168.10.210:8000/user/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username,  // 🔁 properly labeled
+          email: email,
+          password: password,
+        }),
+      });
+  
+      if (!res.ok) {
+        const err = await res.json();
+        console.log("🚨 Register error response:", err);
+        throw new Error(err.detail || 'Registration failed');
+      }
+  
+      // auto-login after register
+      return await login(username, password);
+  
+    } catch (err) {
+      return { success: false, message: err.message };
+    }
+  };
+  
+
+
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, register }}>
       {children}
     </AuthContext.Provider>
   );
